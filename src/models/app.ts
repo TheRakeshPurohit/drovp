@@ -222,7 +222,6 @@ export class App {
 					break;
 
 				case 'drop': {
-					console.log('drop parts:', parts);
 					const profileId = String(parts[0]);
 					const profile = this.store.profiles.byId().get(profileId);
 
@@ -269,7 +268,7 @@ export class App {
 			reaction(
 				() => settings[setting](),
 				(value: ReturnType<(typeof settings)[typeof setting]>) => {
-					ipcRenderer.invoke(`set-setting`, setting, value);
+					ipcRenderer.send(`set-setting`, setting, value);
 				}
 			);
 		}
@@ -304,7 +303,7 @@ export class App {
 	polarTheme = computed(() => (this.theme() === 'light' ? 'dark' : 'light'));
 
 	// Notifies main process that everything is ready
-	ready = () => ipcRenderer.invoke('ready');
+	ready = () => ipcRenderer.send('ready');
 
 	isUpdating = () => this.store.staging.matchStaging('app', 'update') != null;
 
@@ -689,7 +688,7 @@ export class App {
 
 	handleBlur = createAction(() => this.focused(false));
 
-	exit = () => ipcRenderer.invoke('exit');
+	exit = () => ipcRenderer.send('exit');
 
 	/**
 	 * Displays a modal with error and report button.
